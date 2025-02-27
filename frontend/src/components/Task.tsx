@@ -27,13 +27,13 @@ const Task: React.FC<TaskProps> = ({task}) => {
   const getBackgroundColor = (priority: string) => {
     switch (priority) {
       case 'high':
-        return 'rgba(255, 0, 0, 1)'; // Light red
+        return '#ff0000'; // Light red
       case 'medium':
-        return 'rgba(255, 165, 0, 1)'; // Light orange
+        return '#ffa500'; // Light orange
       case 'low':
-        return 'rgba(0, 128, 0, 1)'; // Light green
+        return '#008000'; // Light green
       default:
-        return 'rgba(255, 165, 0, 1)'; // Default to light orange
+        return '#ffa500'; // Default to light orange
     }
   };
 
@@ -98,13 +98,13 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     padding: 10,
-    marginLeft: 30,
-    marginVertical: 5,
+    marginLeft: 25,
+    marginBottom: 15,
     marginHorizontal: 10,
     borderRadius: 8,
     shadowColor: '#000',
-    shadowOffset: {width: 0, height: 1},
-    shadowOpacity: 0.1,
+    shadowOffset: {width: 3, height: 3},
+    shadowOpacity: 0.05,
     shadowRadius: 5,
     elevation: 3,
   },

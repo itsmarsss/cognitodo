@@ -1,7 +1,7 @@
 import React from 'react';
 import {TouchableOpacity, StyleSheet} from 'react-native';
-import Icon from 'react-native-vector-icons/MaterialIcons';
 import {useNavigation} from '@react-navigation/native';
+import {Text} from 'react-native-gesture-handler';
 
 const AddTask: React.FC = () => {
   const navigation = useNavigation();
@@ -12,7 +12,7 @@ const AddTask: React.FC = () => {
 
   return (
     <TouchableOpacity style={styles.fab} onPress={handlePress}>
-      <Icon name="add" size={48} color="#fff" />
+      <Text style={{fontSize: 48, color: '#fff', lineHeight: 50}}>+</Text>
     </TouchableOpacity>
   );
 };
@@ -20,12 +20,12 @@ const AddTask: React.FC = () => {
 const styles = StyleSheet.create({
   fab: {
     position: 'absolute',
-    right: 20,
-    bottom: 20,
+    right: 25,
+    bottom: 25,
     width: 56,
     height: 56,
     borderRadius: 28,
-    backgroundColor: '#5C6BC0',
+    backgroundColor: '#ffa500',
     justifyContent: 'center',
     alignItems: 'center',
     elevation: 5,

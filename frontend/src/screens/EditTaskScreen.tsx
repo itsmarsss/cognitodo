@@ -9,12 +9,10 @@ import {
   Platform,
   KeyboardAvoidingView,
 } from 'react-native';
-import Icon from 'react-native-vector-icons/MaterialIcons';
 import {useNavigation} from '@react-navigation/native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import {updateTask} from '../services/api';
 import {TasksContext} from '../contexts/TasksContext';
-import {Picker} from '@react-native-picker/picker';
 
 const EditTaskScreen: React.FC<{route: any}> = ({route}) => {
   const {

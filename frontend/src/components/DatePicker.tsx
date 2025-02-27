@@ -12,6 +12,7 @@ const DatePicker: React.FC = () => {
 
   return (
     <DateTimePicker
+      style={{marginLeft: -10}}
       value={date}
       mode="date"
       display="default"

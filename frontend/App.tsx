@@ -13,7 +13,7 @@ const Stack = createStackNavigator();
 
 // Theme colors
 const THEME = {
-  primary: '#5C6BC0', // Indigo as primary
+  primary: '#FFF', // Indigo as primary
   accent: '#FF9800', // Orange as accent, but used sparingly
   background: '#FDFDFD',
   card: '#FFFFFF',
@@ -30,12 +30,12 @@ const App: React.FC = () => {
             headerStyle: {
               backgroundColor: THEME.primary,
             },
-            headerTintColor: '#fff',
+            headerTintColor: THEME.text,
           }}>
           <Stack.Screen
             name="TaskList"
             component={TaskListScreen}
-            options={{title: 'My Tasks'}}
+            options={{title: 'CogniTodo'}}
           />
           <Stack.Screen
             name="AddTask"

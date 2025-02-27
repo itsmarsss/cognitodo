@@ -21,7 +21,7 @@ const TaskList: React.FC<TaskListProps> = ({tasks, onEditTask}) => {
 
 const styles = StyleSheet.create({
   listContainer: {
-    paddingVertical: 10,
+    paddingTop: 5,
   },
 });
 

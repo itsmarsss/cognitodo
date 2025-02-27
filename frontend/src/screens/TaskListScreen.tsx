@@ -16,8 +16,10 @@ const TaskListScreen: React.FC = () => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.header}>My Tasks</Text>
-      <DatePicker />
+      <View style={styles.topper}>
+        <Text style={styles.header}>My Tasks</Text>
+        <DatePicker />
+      </View>
       <TaskList
         tasks={tasks}
         onTaskUpdate={refreshTasks}
@@ -34,10 +36,15 @@ const styles = StyleSheet.create({
     padding: 20,
     backgroundColor: '#FBFBFB',
   },
+  topper: {
+    marginLeft: 30,
+    marginTop: 50,
+    marginBottom: 10,
+  },
   header: {
-    fontSize: 24,
+    fontSize: 30,
     fontWeight: 'bold',
-    margin: 20,
+    marginBottom: 10,
     color: '#333',
   },
 });
