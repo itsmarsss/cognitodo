@@ -55,7 +55,7 @@ const AddTaskScreen: React.FC = () => {
   ];
 
   const handleAddTask = async () => {
-    if (description.trim()) {
+    if (name.trim() && description.trim()) {
       try {
         await createTask(name, description, status, priority, duration);
         refreshTasks();
@@ -63,6 +63,8 @@ const AddTaskScreen: React.FC = () => {
       } catch (error) {
         Alert.alert('Failed to add task');
       }
+    } else if (description.trim()) {
+      Alert.alert('Please enter a task name');
     } else {
       Alert.alert('Please enter a task description');
     }
@@ -74,7 +76,7 @@ const AddTaskScreen: React.FC = () => {
       style={styles.keyboardAvoid}>
       <ScrollView style={styles.container} keyboardShouldPersistTaps="handled">
         <View style={styles.formGroup}>
-          <Text style={styles.label}>Task Name</Text>
+          <Text style={styles.label}>Name</Text>
           <TextInput
             style={styles.input}
             placeholder="Enter task name"
@@ -84,7 +86,7 @@ const AddTaskScreen: React.FC = () => {
         </View>
 
         <View style={styles.formGroup}>
-          <Text style={styles.label}>Task Description</Text>
+          <Text style={styles.label}>Description</Text>
           <TextInput
             style={styles.descriptionInput}
             placeholder="What needs to be done?"

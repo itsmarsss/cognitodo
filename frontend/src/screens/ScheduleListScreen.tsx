@@ -36,7 +36,7 @@ const SchedulesListScreen: React.FC = () => {
         <ActivityIndicator
           style={{marginTop: 20}}
           size="large"
-          color="#0000ff"
+          color="#ffa500"
         />
       ) : dailyPlan ? (
         <ScheduleList schedule={dailyPlan.schedule} />

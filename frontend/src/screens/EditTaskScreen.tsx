@@ -1,4 +1,4 @@
-import React, {useState, useContext, useEffect} from 'react';
+import React, {useState, useContext} from 'react';
 import {
   View,
   TextInput,
@@ -57,14 +57,16 @@ const EditTaskScreen: React.FC<{route: any}> = ({route}) => {
   ];
 
   const handleUpdateTask = async (taskId: number) => {
-    if (description.trim()) {
+    if (name.trim() && description.trim()) {
       try {
         await updateTask(taskId, name, description, status, priority, duration);
         refreshTasks();
         navigation.goBack();
       } catch (error) {
-        Alert.alert('Failed to update task');
+        Alert.alert('Failed to add task');
       }
+    } else if (description.trim()) {
+      Alert.alert('Please enter a task name');
     } else {
       Alert.alert('Please enter a task description');
     }
@@ -86,7 +88,7 @@ const EditTaskScreen: React.FC<{route: any}> = ({route}) => {
       style={styles.keyboardAvoid}>
       <ScrollView style={styles.container} keyboardShouldPersistTaps="handled">
         <View style={styles.formGroup}>
-          <Text style={styles.label}>Task Name</Text>
+          <Text style={styles.label}>Name</Text>
           <TextInput
             style={styles.input}
             placeholder="Enter task name"
@@ -96,7 +98,7 @@ const EditTaskScreen: React.FC<{route: any}> = ({route}) => {
         </View>
 
         <View style={styles.formGroup}>
-          <Text style={styles.label}>Task Description</Text>
+          <Text style={styles.label}>Description</Text>
           <TextInput
             style={styles.descriptionInput}
             placeholder="What needs to be done?"

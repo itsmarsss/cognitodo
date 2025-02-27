@@ -51,40 +51,48 @@ const Schedule: React.FC<ScheduleProps> = ({schedule}) => {
   };
 
   return (
-    <TouchableOpacity
-      style={[
-        styles.card,
-        {
-          backgroundColor: '#FFFFFF',
-          borderLeftWidth: 2,
-          borderLeftColor: getBorderColor(task ? task.priority : 'medium'),
-        },
-      ]}
-      onPress={handlePress}>
-      <View style={styles.leftSection}>
-        <View style={styles.taskHeader}>
-          <Text
-            style={styles.scheduleTitle}
-            numberOfLines={1}
-            ellipsizeMode="tail">
-            <Text
-              style={{
-                fontSize: 20,
-              }}>
-              {task ? getStatusEmoji(task.status) : '❓'}
-            </Text>{' '}
-            {task ? task.name : 'Task Not Found'}
-          </Text>
-        </View>
-        <Text style={styles.scheduleDescription} numberOfLines={2}>
-          {task ? task.description : 'No description available'}
-        </Text>
-      </View>
-      <View style={styles.rightSection}>
-        <Text style={styles.scheduleTime}>Start: {schedule.start_time}</Text>
-        <Text style={styles.scheduleTime}>End: {schedule.end_time}</Text>
-      </View>
-    </TouchableOpacity>
+    <>
+      {task ? ( // Check if task exists before rendering TouchableOpacity
+        <TouchableOpacity
+          style={[
+            styles.card,
+            {
+              backgroundColor: '#FFFFFF',
+              borderLeftWidth: 5,
+              borderLeftColor: getBorderColor(task ? task.priority : 'medium'),
+            },
+          ]}
+          onPress={handlePress}>
+          <View style={styles.leftSection}>
+            <View style={styles.taskHeader}>
+              <Text
+                style={styles.scheduleTitle}
+                numberOfLines={1}
+                ellipsizeMode="tail">
+                <Text
+                  style={{
+                    fontSize: 20,
+                  }}>
+                  {task ? getStatusEmoji(task.status) : '❓'}
+                </Text>{' '}
+                {task ? task.name : 'Task Not Found'}
+              </Text>
+            </View>
+            <Text style={styles.scheduleDescription} numberOfLines={2}>
+              {task ? task.description : 'No description available'}
+            </Text>
+          </View>
+          <View style={styles.rightSection}>
+            <Text style={styles.scheduleTime}>
+              Start: {schedule.start_time}
+            </Text>
+            <Text style={styles.scheduleTime}>End: {schedule.end_time}</Text>
+          </View>
+        </TouchableOpacity>
+      ) : (
+        <Text style={styles.taskNotFound}>Task Not Found</Text> // Optional placeholder
+      )}
+    </>
   );
 };
 
@@ -135,6 +143,13 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#333',
     marginBottom: 2,
+  },
+  taskNotFound: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#333',
+    marginLeft: 25,
+    marginBottom: 15,
   },
 });
 

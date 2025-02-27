@@ -12,7 +12,6 @@ export type ScheduledTask = {
   task_id: number;
   start_time: string; // e.g., '10:00 AM'
   end_time: string; // e.g., '11:00 AM'
-  priority: string; // e.g., 'high', 'medium', 'low'
 };
 
 export type DailyPlan = {

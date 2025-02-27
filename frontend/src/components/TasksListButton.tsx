@@ -11,7 +11,7 @@ const TasksListButton: React.FC = () => {
 
   return (
     <TouchableOpacity style={styles.button} onPress={handlePress}>
-      <Text style={styles.buttonText}>Tasks</Text>
+      <Text style={styles.buttonText}>📋</Text>
     </TouchableOpacity>
   );
 };
@@ -24,7 +24,7 @@ const styles = StyleSheet.create({
     width: 56,
     height: 56,
     borderRadius: 28,
-    backgroundColor: '#4CAF50', // Green accent
+    backgroundColor: '#ffa500',
     justifyContent: 'center',
     alignItems: 'center',
     elevation: 5,
