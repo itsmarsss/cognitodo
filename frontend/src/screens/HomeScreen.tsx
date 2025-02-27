@@ -2,35 +2,23 @@ import React, {useState, useCallback} from 'react';
 import {
   View,
   Text,
-  Button,
   ActivityIndicator,
   StyleSheet,
-  SafeAreaView,
-  StatusBar,
-  Platform,
+  TouchableOpacity,
 } from 'react-native';
 import {useNavigation, useFocusEffect} from '@react-navigation/native';
 import {getTasks, getDailyPlan} from '../services/api';
 import TaskList from '../components/TaskList';
-import DailySchedule from '../components/DailySchedule';
+import DailySchedule from '../components/ScheduleList';
 
-type Task = {
-  id: number;
-  description: string;
-  status: string;
-};
-
+type Task = {id: number; description: string; status: string};
 type ScheduledTask = {
   task_id: number;
   start_time: string;
   end_time: string;
   priority: string;
 };
-
-type DailyPlan = {
-  date: string;
-  schedule: ScheduledTask[];
-};
+type DailyPlan = {date: string; schedule: ScheduledTask[]};
 
 const HomeScreen: React.FC = () => {
   const [tasks, setTasks] = useState<Task[]>([]);
@@ -90,42 +78,38 @@ const HomeScreen: React.FC = () => {
   }
 
   return (
-    <SafeAreaView style={styles.safeArea}>
-      <View style={styles.container}>
-        <Text style={styles.header}>Tasks</Text>
-        <TaskList
-          tasks={tasks}
-          onTaskUpdate={fetchTasks}
-          onEditTask={onEditTask}
-        />
-        <View style={styles.buttonRow}>
-          <Button
-            title="Add New Task"
-            onPress={() => navigation.navigate('AddTask')}
-          />
-          <Button title="Plan" onPress={fetchPlan} />
-        </View>
-        {plan && (
-          <>
-            <Text style={[styles.header, styles.marginTop]}>
-              Daily Schedule
-            </Text>
-            <DailySchedule schedule={plan.schedule} tasks={tasks} />
-          </>
-        )}
+    <View style={styles.container}>
+      <Text style={styles.header}>Tasks</Text>
+      <TaskList
+        tasks={tasks}
+        onTaskUpdate={fetchTasks}
+        onEditTask={onEditTask}
+      />
+      <View style={styles.buttonRow}>
+        <TouchableOpacity
+          style={styles.orangeButton}
+          onPress={() => navigation.navigate('AddTask')}>
+          <Text style={styles.buttonText}>Add New Task</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.orangeButton} onPress={fetchPlan}>
+          <Text style={styles.buttonText}>Plan</Text>
+        </TouchableOpacity>
       </View>
-    </SafeAreaView>
+      {plan && (
+        <>
+          <Text style={[styles.header, styles.marginTop]}>Daily Schedule</Text>
+          <DailySchedule schedule={plan.schedule} tasks={tasks} />
+        </>
+      )}
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
-  safeArea: {
-    flex: 1,
-    backgroundColor: '#f8f9fa',
-  },
   container: {
     flex: 1,
-    padding: 16,
+    padding: 20,
+    backgroundColor: '#f5f5f5',
   },
   center: {
     flex: 1,
@@ -136,7 +120,7 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: 'bold',
     marginBottom: 10,
-    color: '#333',
+    color: '#E64A19', // Dark orange for headers
   },
   marginTop: {
     marginTop: 20,
@@ -145,6 +129,18 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     marginTop: 10,
+  },
+  orangeButton: {
+    backgroundColor: '#FF5722', // Orange accent
+    padding: 10,
+    borderRadius: 5,
+    flex: 1,
+    marginHorizontal: 5,
+    alignItems: 'center',
+  },
+  buttonText: {
+    color: '#fff',
+    fontSize: 16,
   },
 });
 

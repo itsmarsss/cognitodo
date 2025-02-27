@@ -11,34 +11,53 @@ const api = axios.create({
 });
 
 // Task-related API calls
+
+// Updated to include priority and dueDate
 export const createTask = async (
   description: string,
-  status: string = 'pending',
+  status: 'pending' | 'completed' | 'cancelled' | 'rescheduled' = 'pending',
+  priority: 'high' | 'medium' | 'low',
+  dueDate: string, // Expected format: 'YYYY-MM-DD'
 ) => {
-  const response = await api.post('/tasks', {description, status});
+  const response = await api.post('/tasks', {
+    description,
+    status,
+    priority,
+    dueDate,
+  });
   return response.data;
 };
 
+// No changes needed; retrieves all tasks with new fields
 export const getTasks = async () => {
   const response = await api.get('/tasks');
   return response.data;
 };
 
+// Updated to include priority and dueDate
 export const updateTask = async (
   id: number,
   description: string,
-  status: string,
+  status: 'pending' | 'completed' | 'cancelled' | 'rescheduled',
+  priority: 'high' | 'medium' | 'low',
+  dueDate: string, // Expected format: 'YYYY-MM-DD'
 ) => {
-  const response = await api.put(`/tasks/${id}`, {description, status});
+  const response = await api.put(`/tasks/${id}`, {
+    description,
+    status,
+    priority,
+    dueDate,
+  });
   return response.data;
 };
 
+// No changes needed; deletes task by ID
 export const deleteTask = async (id: number) => {
   await api.delete(`/tasks/${id}`);
 };
 
-// Daily plan API call
-export const getDailyPlan = async () => {
-  const response = await api.get('/plan');
+// Updated to accept a date parameter
+export const getDailyPlan = async (date: string) => {
+  const response = await api.get(`/plan?date=${date}`);
   return response.data;
 };
