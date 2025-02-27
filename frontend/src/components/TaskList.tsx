@@ -25,6 +25,7 @@ const TaskList: React.FC<TaskListProps> = ({tasks, onRefresh, refreshing}) => {
 const styles = StyleSheet.create({
   listContainer: {
     paddingTop: 5,
+    paddingBottom: 75,
   },
 });
 

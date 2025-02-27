@@ -22,6 +22,7 @@ const ScheduleList: React.FC<ScheduleListProps> = ({schedule}) => {
 const styles = StyleSheet.create({
   listContainer: {
     paddingTop: 5,
+    paddingBottom: 75,
   },
 });
 

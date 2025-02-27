@@ -13,7 +13,7 @@ const Schedule: React.FC<ScheduleProps> = ({schedule}) => {
   const {tasks} = useContext(TasksContext); // Access tasks from context
 
   // Find the task using schedule.task_id
-  const task = tasks.find(task => task.id === schedule.task_id);
+  const task = (tasks || []).find(task => task.id === schedule.task_id);
 
   const handlePress = () => {
     // Navigate to the EditTask with the task parameter
@@ -58,7 +58,7 @@ const Schedule: React.FC<ScheduleProps> = ({schedule}) => {
             styles.card,
             {
               backgroundColor: '#FFFFFF',
-              borderLeftWidth: 5,
+              borderLeftWidth: 2,
               borderLeftColor: getBorderColor(task ? task.priority : 'medium'),
             },
           ]}
@@ -71,7 +71,7 @@ const Schedule: React.FC<ScheduleProps> = ({schedule}) => {
                 ellipsizeMode="tail">
                 <Text
                   style={{
-                    fontSize: 20,
+                    fontSize: 15,
                   }}>
                   {task ? getStatusEmoji(task.status) : '❓'}
                 </Text>{' '}
