@@ -14,16 +14,18 @@ const api = axios.create({
 
 // Updated to include priority and dueDate
 export const createTask = async (
+  name: string,
   description: string,
   status: 'pending' | 'completed' | 'cancelled' | 'rescheduled' = 'pending',
   priority: 'high' | 'medium' | 'low',
-  dueDate: string, // Expected format: 'YYYY-MM-DD'
+  duration: string,
 ) => {
   const response = await api.post('/tasks', {
+    name,
     description,
     status,
     priority,
-    dueDate,
+    duration,
   });
   return response.data;
 };
@@ -37,16 +39,18 @@ export const getTasks = async () => {
 // Updated to include priority and dueDate
 export const updateTask = async (
   id: number,
+  name: string,
   description: string,
   status: 'pending' | 'completed' | 'cancelled' | 'rescheduled',
   priority: 'high' | 'medium' | 'low',
-  dueDate: string, // Expected format: 'YYYY-MM-DD'
+  duration: string,
 ) => {
   const response = await api.put(`/tasks/${id}`, {
+    name,
     description,
     status,
     priority,
-    dueDate,
+    duration,
   });
   return response.data;
 };

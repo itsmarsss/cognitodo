@@ -18,7 +18,6 @@ const Task: React.FC<TaskProps> = ({task}) => {
       initialDescription: task.description,
       initialStatus: task.status,
       initialPriority: task.priority || 'medium',
-      initialDueDate: task.dueDate,
       initialDuration: task.duration,
     });
   };
@@ -37,19 +36,19 @@ const Task: React.FC<TaskProps> = ({task}) => {
     }
   };
 
-  // Function to determine emoji based on status
-  const getStatusEmoji = (status: string) => {
+  // Function to determine color based on status
+  const getStatusColor = (status: string) => {
     switch (status) {
       case 'completed':
-        return '✅'; // Check mark emoji
+        return '#28a745'; // Green
       case 'pending':
-        return '⏳'; // Hourglass emoji
+        return '#ffc107'; // Yellow
       case 'cancelled':
-        return '❌'; // Cross mark emoji
+        return '#dc3545'; // Red
       case 'rescheduled':
-        return '🔄'; // Counterclockwise arrows emoji
+        return '#17a2b8'; // Teal
       default:
-        return '❓'; // Question mark emoji for unknown status
+        return '#6c757d'; // Gray for unknown status
     }
   };
 
@@ -72,8 +71,7 @@ const Task: React.FC<TaskProps> = ({task}) => {
               }}>
               •
             </Text>{' '}
-            {task.name || 'New Task'}{' '}
-            <Text style={styles.status}>{getStatusEmoji(task.status)}</Text>
+            {task.name || 'New Task'}
           </Text>
         </View>
         <Text style={styles.taskDescription} numberOfLines={2}>
@@ -81,11 +79,11 @@ const Task: React.FC<TaskProps> = ({task}) => {
         </Text>
       </View>
       <View style={styles.rightSection}>
-        <Text style={styles.taskTime}>{task.timeToComplete || 0} mins</Text>
-        <Text style={styles.taskDue}>
-          {task.dueDate
-            ? `Due: ${new Date(task.dueDate).toLocaleDateString()}`
-            : 'Flexible'}
+        <Text style={styles.taskTime}>
+          {task.duration || 0} min{task.duration != '1' ? 's' : ''}
+        </Text>
+        <Text style={[styles.taskStatus, {color: getStatusColor(task.status)}]}>
+          {task.status ? `${task.status}` : 'Pending'}
         </Text>
       </View>
     </TouchableOpacity>
@@ -130,15 +128,16 @@ const styles = StyleSheet.create({
   rightSection: {
     alignItems: 'center',
     justifyContent: 'flex-start',
-    flex: 0.2,
+    flex: 0.5,
     paddingLeft: 5,
   },
   taskTime: {
     fontSize: 14,
     fontWeight: 'bold',
     color: '#333',
+    marginBottom: 2,
   },
-  taskDue: {
+  taskStatus: {
     fontSize: 12,
     fontStyle: 'italic',
     color: '#999',

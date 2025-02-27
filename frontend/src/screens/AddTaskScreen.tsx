@@ -11,7 +11,6 @@ import {
   KeyboardAvoidingView,
 } from 'react-native';
 import {useNavigation} from '@react-navigation/native';
-import DateTimePicker from '@react-native-community/datetimepicker';
 import {createTask} from '../services/api';
 import {TasksContext} from '../contexts/TasksContext';
 
@@ -20,8 +19,6 @@ const AddTaskScreen: React.FC = () => {
   const [description, setDescription] = useState('');
   const [status, setStatus] = useState('pending');
   const [priority, setPriority] = useState('medium');
-  const [dueTime, setDueTime] = useState(new Date());
-  const [showTimePicker, setShowTimePicker] = useState(false);
   const [duration, setDuration] = useState('');
   const navigation = useNavigation();
   const {refreshTasks} = useContext(TasksContext);
@@ -59,14 +56,7 @@ const AddTaskScreen: React.FC = () => {
   const handleAddTask = async () => {
     if (description.trim()) {
       try {
-        await createTask(
-          name,
-          description,
-          status,
-          priority,
-          dueTime.toISOString().split('T')[0],
-          duration,
-        );
+        await createTask(name, description, status, priority, duration);
         refreshTasks();
         navigation.goBack();
       } catch (error) {
@@ -153,35 +143,21 @@ const AddTaskScreen: React.FC = () => {
           </View>
         </View>
 
-        <View style={styles.rowContainer}>
-          <View style={styles.formGroup}>
-            <Text style={styles.label}>Duration (mins)</Text>
-            <TextInput
-              style={styles.input}
-              placeholder="Enter duration in minutes"
-              value={duration}
-              onChangeText={text => {
-                const numericValue = text.replace(/[^0-9]/g, '');
-                const numericDuration = parseInt(numericValue, 10);
-                if (numericDuration >= 0 && numericDuration <= 1440) {
-                  setDuration(numericValue);
-                }
-              }}
-              keyboardType="numeric" // Set keyboard type to numeric
-            />
-          </View>
-          <View style={styles.dueTimeContainer}>
-            <Text style={styles.label}>Due Time</Text>
-            <DateTimePicker
-              value={dueTime}
-              mode="time"
-              display="default"
-              onChange={(event, selectedTime) => {
-                setShowTimePicker(false);
-                if (selectedTime) setDueTime(selectedTime);
-              }}
-            />
-          </View>
+        <View style={styles.formGroup}>
+          <Text style={styles.label}>Duration (mins)</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="Enter duration in minutes"
+            value={duration}
+            onChangeText={text => {
+              const numericValue = text.replace(/[^0-9]/g, '');
+              const numericDuration = parseInt(numericValue, 10);
+              if (numericDuration >= 0 && numericDuration <= 1440) {
+                setDuration(numericValue);
+              }
+            }}
+            keyboardType="numeric" // Set keyboard type to numeric
+          />
         </View>
 
         <TouchableOpacity style={styles.submitButton} onPress={handleAddTask}>
@@ -246,20 +222,6 @@ const styles = StyleSheet.create({
     color: '#4A5568',
     fontWeight: '500',
   },
-  dateSelector: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    borderWidth: 1,
-    borderColor: '#E2E8F0',
-    borderRadius: 8,
-    padding: 14,
-    backgroundColor: '#fff',
-  },
-  dateText: {
-    marginLeft: 10,
-    fontSize: 16,
-    color: '#4A5568',
-  },
   submitButton: {
     backgroundColor: '#5C6BC0',
     borderRadius: 8,
@@ -280,12 +242,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     fontSize: 16,
     height: 40, // Set a fixed height for normal text input
-  },
-  dueTimeContainer: {
-    flexDirection: 'column',
-    alignItems: 'center',
-    marginLeft: 10,
-    marginBottom: 20,
   },
   rowContainer: {
     flexDirection: 'row',

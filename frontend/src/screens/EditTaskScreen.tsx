@@ -1,4 +1,4 @@
-import React, {useState, useContext} from 'react';
+import React, {useState, useContext, useEffect} from 'react';
 import {
   View,
   TextInput,
@@ -10,7 +10,6 @@ import {
   KeyboardAvoidingView,
 } from 'react-native';
 import {useNavigation} from '@react-navigation/native';
-import DateTimePicker from '@react-native-community/datetimepicker';
 import {updateTask} from '../services/api';
 import {TasksContext} from '../contexts/TasksContext';
 
@@ -21,7 +20,6 @@ const EditTaskScreen: React.FC<{route: any}> = ({route}) => {
     initialDescription,
     initialStatus,
     initialPriority,
-    initialDueDate,
     initialDuration,
   } = route.params;
 
@@ -30,9 +28,7 @@ const EditTaskScreen: React.FC<{route: any}> = ({route}) => {
   const [description, setDescription] = useState(initialDescription);
   const [status, setStatus] = useState(initialStatus);
   const [priority, setPriority] = useState(initialPriority);
-  const [dueTime, setDueTime] = useState(new Date(initialDueDate)); // Ensure dueTime is a Date object
   const [duration, setDuration] = useState(initialDuration);
-  const [showTimePicker, setShowTimePicker] = useState(false);
   const navigation = useNavigation();
   const {refreshTasks} = useContext(TasksContext);
 
@@ -69,15 +65,7 @@ const EditTaskScreen: React.FC<{route: any}> = ({route}) => {
   const handleUpdateTask = async (taskId: number) => {
     if (description.trim()) {
       try {
-        await updateTask(
-          taskId,
-          name,
-          description,
-          status,
-          priority,
-          dueTime.toISOString().split('T')[0], // Keep the date part
-          duration,
-        );
+        await updateTask(taskId, name, description, status, priority, duration);
         refreshTasks();
         navigation.goBack();
       } catch (error) {
@@ -164,36 +152,21 @@ const EditTaskScreen: React.FC<{route: any}> = ({route}) => {
           </View>
         </View>
 
-        <View style={styles.rowContainer}>
-          <View style={styles.formGroup}>
-            <Text style={styles.label}>Duration (mins)</Text>
-            <TextInput
-              style={styles.input}
-              placeholder="Enter duration in minutes"
-              value={duration}
-              onChangeText={text => {
-                const numericValue = text.replace(/[^0-9]/g, '');
-                const numericDuration = parseInt(numericValue, 10);
-                if (numericDuration >= 0 && numericDuration <= 1440) {
-                  setDuration(numericValue);
-                }
-              }}
-              keyboardType="numeric"
-            />
-          </View>
-
-          <View style={styles.dueTimeContainer}>
-            <Text style={styles.label}>Due Time</Text>
-            <DateTimePicker
-              value={dueTime}
-              mode="time"
-              display="default"
-              onChange={(event, selectedTime) => {
-                setShowTimePicker(false);
-                if (selectedTime) setDueTime(selectedTime);
-              }}
-            />
-          </View>
+        <View style={styles.formGroup}>
+          <Text style={styles.label}>Duration (mins)</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="Enter duration in minutes"
+            value={duration}
+            onChangeText={text => {
+              const numericValue = text.replace(/[^0-9]/g, '');
+              const numericDuration = parseInt(numericValue, 10);
+              if (numericDuration >= 0 && numericDuration <= 1440) {
+                setDuration(numericValue);
+              }
+            }}
+            keyboardType="numeric"
+          />
         </View>
 
         <TouchableOpacity
@@ -257,20 +230,6 @@ const styles = StyleSheet.create({
     color: '#4A5568',
     fontWeight: '500',
   },
-  dateSelector: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    borderWidth: 1,
-    borderColor: '#E2E8F0',
-    borderRadius: 8,
-    padding: 14,
-    backgroundColor: '#fff',
-  },
-  dateText: {
-    marginLeft: 10,
-    fontSize: 16,
-    color: '#4A5568',
-  },
   submitButton: {
     backgroundColor: '#5C6BC0',
     borderRadius: 8,
@@ -291,12 +250,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     fontSize: 16,
     height: 40, // Set a fixed height for normal text input
-  },
-  dueTimeContainer: {
-    flexDirection: 'column',
-    alignItems: 'center',
-    marginLeft: 10,
-    marginBottom: 20,
   },
   rowContainer: {
     flexDirection: 'row',

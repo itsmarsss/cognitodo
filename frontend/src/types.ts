@@ -1,9 +1,11 @@
 export type Task = {
   id: number;
+  name: string;
   description: string;
   status: 'pending' | 'completed' | 'cancelled' | 'rescheduled';
   priority: 'high' | 'medium' | 'low';
-  dueDate: string; // ISO format, e.g., '2023-12-25'
+  due_time: string;
+  duration: string;
 };
 
 export type ScheduledTask = {
