@@ -3,7 +3,7 @@ package models
 type Task struct {
 	ID          int     `json:"id"`
 	Name        string  `json:"name"`        // New field for task name
-	Description string  `json:"description"`
+	Description string  `json:"description"` // New field for task description
 	Priority    string  `json:"priority"`    // New field for task priority
 	Status      string  `json:"status"`      // e.g., "pending", "completed"
 	Duration    string  `json:"duration"`    // New field for task duration in minutes

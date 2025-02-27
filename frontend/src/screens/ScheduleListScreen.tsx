@@ -1,13 +1,12 @@
 import React, {useState, useEffect, useContext} from 'react';
-import {View, Text, StyleSheet, Alert} from 'react-native';
+import {View, Text, StyleSheet, Alert, ActivityIndicator} from 'react-native';
 import ScheduleList from '../components/ScheduleList';
-import {TasksContext} from '../contexts/TasksContext';
 import {getDailyPlan} from '../services/api';
 import {DailyPlan} from '../types';
 import TasksListButton from '../components/TasksListButton';
+import DatePicker from '../components/DatePicker';
 
-const SchedulesScreen: React.FC = () => {
-  const {tasks} = useContext(TasksContext);
+const SchedulesListScreen: React.FC = () => {
   const [dailyPlan, setDailyPlan] = useState<DailyPlan | null>(null);
   const [loading, setLoading] = useState(false);
 
@@ -24,15 +23,23 @@ const SchedulesScreen: React.FC = () => {
   };
 
   useEffect(() => {
-    plan;
+    plan();
   }, []);
 
   return (
     <View style={styles.container}>
+      <View style={styles.topper}>
+        <Text style={styles.header}>Daily Schedule</Text>
+        <DatePicker />
+      </View>
       {loading ? (
-        <Text>Loading...</Text>
+        <ActivityIndicator
+          style={{marginTop: 20}}
+          size="large"
+          color="#0000ff"
+        />
       ) : dailyPlan ? (
-        <ScheduleList schedule={dailyPlan.schedule} tasks={tasks} />
+        <ScheduleList schedule={dailyPlan.schedule} />
       ) : (
         <Text>No schedule for this date</Text>
       )}
@@ -47,6 +54,17 @@ const styles = StyleSheet.create({
     padding: 20,
     backgroundColor: '#f5f5f5',
   },
+  topper: {
+    marginLeft: 30,
+    marginTop: 50,
+    marginBottom: 10,
+  },
+  header: {
+    fontSize: 30,
+    fontWeight: 'bold',
+    marginBottom: 10,
+    color: '#333',
+  },
 });
 
-export default SchedulesScreen;
+export default SchedulesListScreen;

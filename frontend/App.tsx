@@ -6,7 +6,7 @@ import {TasksProvider} from './src/contexts/TasksContext';
 import TaskListScreen from './src/screens/TaskListScreen';
 import AddTaskScreen from './src/screens/AddTaskScreen';
 import EditTaskScreen from './src/screens/EditTaskScreen';
-import SchedulesScreen from './src/screens/SchedulesScreen';
+import SchedulesListScreen from './src/screens/ScheduleListScreen';
 
 const Stack = createStackNavigator();
 
@@ -48,7 +48,7 @@ const App: React.FC = () => {
           />
           <Stack.Screen
             name="ScheduleList"
-            component={SchedulesScreen}
+            component={SchedulesListScreen}
             options={{title: 'Daily Schedule'}}
           />
         </Stack.Navigator>
