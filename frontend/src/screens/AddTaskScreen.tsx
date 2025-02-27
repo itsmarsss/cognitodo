@@ -22,31 +22,31 @@ const AddTaskScreen: React.FC = () => {
   const [description, setDescription] = useState('');
   const [status, setStatus] = useState('pending');
   const [priority, setPriority] = useState('medium');
-  const [dueDate, setDueDate] = useState(new Date());
-  const [showDatePicker, setShowDatePicker] = useState(false);
+  const [dueTime, setDueTime] = useState(new Date());
+  const [showTimePicker, setShowTimePicker] = useState(false);
   const [duration, setDuration] = useState('');
   const navigation = useNavigation();
   const {refreshTasks} = useContext(TasksContext);
 
-  // Status options with icons and colors
+  // Status options with emojis
   const statusOptions = [
     {
       value: 'pending',
       label: 'Pending',
-      icon: 'hourglass-empty',
+      icon: '⏳', // Hourglass emoji
       color: '#3182CE',
     },
     {
       value: 'completed',
       label: 'Completed',
-      icon: 'check-circle',
+      icon: '✅', // Check mark emoji
       color: '#38A169',
     },
-    {value: 'cancelled', label: 'Cancelled', icon: 'cancel', color: '#E53E3E'},
+    {value: 'cancelled', label: 'Cancelled', icon: '❌', color: '#E53E3E'},
     {
       value: 'rescheduled',
       label: 'Rescheduled',
-      icon: 'update',
+      icon: '🔄', // Counterclockwise arrows emoji
       color: '#DD6B20',
     },
   ];
@@ -66,7 +66,7 @@ const AddTaskScreen: React.FC = () => {
           description,
           status,
           priority,
-          dueDate.toISOString().split('T')[0],
+          dueTime.toISOString().split('T')[0],
           duration,
         );
         refreshTasks();
@@ -77,14 +77,6 @@ const AddTaskScreen: React.FC = () => {
     } else {
       alert('Please enter a task description');
     }
-  };
-
-  const formatDate = (date: Date) => {
-    return date.toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-    });
   };
 
   return (
@@ -126,7 +118,7 @@ const AddTaskScreen: React.FC = () => {
                   status === option.value && {borderColor: option.color},
                 ]}
                 onPress={() => setStatus(option.value)}>
-                <Icon name={option.icon} size={16} color={option.color} />
+                <Text style={{fontSize: 16}}>{option.icon + ' '}</Text>
                 <Text
                   style={[
                     styles.optionText,
@@ -163,38 +155,36 @@ const AddTaskScreen: React.FC = () => {
           </View>
         </View>
 
-        <View style={styles.formGroup}>
-          <Text style={styles.label}>Duration (mins)</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Enter duration in minutes"
-            value={duration}
-            onChangeText={setDuration}
-            keyboardType="numeric"
-          />
+        <View style={styles.rowContainer}>
+          <View style={styles.formGroup}>
+            <Text style={styles.label}>Duration (mins)</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="Enter duration in minutes"
+              value={duration}
+              onChangeText={text => {
+                const numericValue = text.replace(/[^0-9]/g, '');
+                const numericDuration = parseInt(numericValue, 10);
+                if (numericDuration >= 0 && numericDuration <= 1440) {
+                  setDuration(numericValue);
+                }
+              }}
+              keyboardType="numeric" // Set keyboard type to numeric
+            />
+          </View>
+          <View style={styles.dueTimeContainer}>
+            <Text style={styles.label}>Due Time</Text>
+            <DateTimePicker
+              value={dueTime}
+              mode="time"
+              display="default"
+              onChange={(event, selectedTime) => {
+                setShowTimePicker(false);
+                if (selectedTime) setDueTime(selectedTime);
+              }}
+            />
+          </View>
         </View>
-
-        <View style={styles.formGroup}>
-          <Text style={styles.label}>Due Time</Text>
-          <TouchableOpacity
-            style={styles.dateSelector}
-            onPress={() => setShowDatePicker(true)}>
-            <Icon name="event" size={20} color="#4A5568" />
-            <Text style={styles.dateText}>{formatDate(dueDate)}</Text>
-          </TouchableOpacity>
-        </View>
-
-        {showDatePicker && (
-          <DateTimePicker
-            value={dueDate}
-            mode="date"
-            display="default"
-            onChange={(event, selectedDate) => {
-              setShowDatePicker(false);
-              if (selectedDate) setDueDate(selectedDate);
-            }}
-          />
-        )}
 
         <TouchableOpacity style={styles.submitButton} onPress={handleAddTask}>
           <Text style={styles.submitButtonText}>Create Task</Text>
@@ -214,7 +204,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
-    backgroundColor: '#F7FAFC',
+    backgroundColor: '#FBFBFB',
   },
   formGroup: {
     marginBottom: 20,
@@ -255,7 +245,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#F7FAFC',
   },
   optionText: {
-    marginLeft: 4,
     color: '#4A5568',
     fontWeight: '500',
   },
@@ -293,6 +282,16 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     fontSize: 16,
     height: 40, // Set a fixed height for normal text input
+  },
+  dueTimeContainer: {
+    flexDirection: 'column',
+    alignItems: 'center',
+    marginLeft: 10,
+    marginBottom: 20,
+  },
+  rowContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
   },
 });
 

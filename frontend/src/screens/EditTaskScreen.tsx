@@ -32,31 +32,31 @@ const EditTaskScreen: React.FC<{route: any}> = ({route}) => {
   const [description, setDescription] = useState(initialDescription);
   const [status, setStatus] = useState(initialStatus);
   const [priority, setPriority] = useState(initialPriority);
-  const [dueDate, setDueDate] = useState(new Date(initialDueDate)); // Ensure dueDate is a Date object
+  const [dueTime, setDueTime] = useState(new Date(initialDueDate)); // Ensure dueTime is a Date object
   const [duration, setDuration] = useState(initialDuration);
-  const [showDatePicker, setShowDatePicker] = useState(false);
+  const [showTimePicker, setShowTimePicker] = useState(false);
   const navigation = useNavigation();
   const {refreshTasks} = useContext(TasksContext);
 
-  // Status options with icons and colors
+  // Status options with emojis
   const statusOptions = [
     {
       value: 'pending',
       label: 'Pending',
-      icon: 'hourglass-empty',
+      icon: '⏳', // Hourglass emoji
       color: '#3182CE',
     },
     {
       value: 'completed',
       label: 'Completed',
-      icon: 'check-circle',
+      icon: '✅', // Check mark emoji
       color: '#38A169',
     },
-    {value: 'cancelled', label: 'Cancelled', icon: 'cancel', color: '#E53E3E'},
+    {value: 'cancelled', label: 'Cancelled', icon: '❌', color: '#E53E3E'},
     {
       value: 'rescheduled',
       label: 'Rescheduled',
-      icon: 'update',
+      icon: '🔄', // Counterclockwise arrows emoji
       color: '#DD6B20',
     },
   ];
@@ -77,7 +77,7 @@ const EditTaskScreen: React.FC<{route: any}> = ({route}) => {
           description,
           status,
           priority,
-          dueDate.toISOString().split('T')[0],
+          dueTime.toISOString().split('T')[0], // Keep the date part
           duration,
         );
         refreshTasks();
@@ -88,14 +88,6 @@ const EditTaskScreen: React.FC<{route: any}> = ({route}) => {
     } else {
       alert('Please enter a task description');
     }
-  };
-
-  const formatDate = (date: Date) => {
-    return date.toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-    });
   };
 
   return (
@@ -137,7 +129,7 @@ const EditTaskScreen: React.FC<{route: any}> = ({route}) => {
                   status === option.value && {borderColor: option.color},
                 ]}
                 onPress={() => setStatus(option.value)}>
-                <Icon name={option.icon} size={16} color={option.color} />
+                <Text style={{fontSize: 16}}>{option.icon + ' '}</Text>
                 <Text
                   style={[
                     styles.optionText,
@@ -174,38 +166,37 @@ const EditTaskScreen: React.FC<{route: any}> = ({route}) => {
           </View>
         </View>
 
-        <View style={styles.formGroup}>
-          <Text style={styles.label}>Duration (mins)</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Enter duration in minutes"
-            value={duration}
-            onChangeText={setDuration}
-            keyboardType="numeric"
-          />
-        </View>
+        <View style={styles.rowContainer}>
+          <View style={styles.formGroup}>
+            <Text style={styles.label}>Duration (mins)</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="Enter duration in minutes"
+              value={duration}
+              onChangeText={text => {
+                const numericValue = text.replace(/[^0-9]/g, '');
+                const numericDuration = parseInt(numericValue, 10);
+                if (numericDuration >= 0 && numericDuration <= 1440) {
+                  setDuration(numericValue);
+                }
+              }}
+              keyboardType="numeric"
+            />
+          </View>
 
-        <View style={styles.formGroup}>
-          <Text style={styles.label}>Due Time</Text>
-          <TouchableOpacity
-            style={styles.dateSelector}
-            onPress={() => setShowDatePicker(true)}>
-            <Icon name="event" size={20} color="#4A5568" />
-            <Text style={styles.dateText}>{formatDate(dueDate)}</Text>
-          </TouchableOpacity>
+          <View style={styles.dueTimeContainer}>
+            <Text style={styles.label}>Due Time</Text>
+            <DateTimePicker
+              value={dueTime}
+              mode="time"
+              display="default"
+              onChange={(event, selectedTime) => {
+                setShowTimePicker(false);
+                if (selectedTime) setDueTime(selectedTime);
+              }}
+            />
+          </View>
         </View>
-
-        {showDatePicker && (
-          <DateTimePicker
-            value={dueDate}
-            mode="date"
-            display="default"
-            onChange={(event, selectedDate) => {
-              setShowDatePicker(false);
-              if (selectedDate) setDueDate(selectedDate);
-            }}
-          />
-        )}
 
         <TouchableOpacity
           style={styles.submitButton}
@@ -224,7 +215,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
-    backgroundColor: '#F7FAFC',
+    backgroundColor: '#FBFBFB',
   },
   formGroup: {
     marginBottom: 20,
@@ -265,7 +256,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#F7FAFC',
   },
   optionText: {
-    marginLeft: 4,
     color: '#4A5568',
     fontWeight: '500',
   },
@@ -303,6 +293,16 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     fontSize: 16,
     height: 40, // Set a fixed height for normal text input
+  },
+  dueTimeContainer: {
+    flexDirection: 'column',
+    alignItems: 'center',
+    marginLeft: 10,
+    marginBottom: 20,
+  },
+  rowContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
   },
 });
 

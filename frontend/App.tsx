@@ -15,7 +15,7 @@ const Stack = createStackNavigator();
 const THEME = {
   primary: '#5C6BC0', // Indigo as primary
   accent: '#FF9800', // Orange as accent, but used sparingly
-  background: '#F5F7FA',
+  background: '#FDFDFD',
   card: '#FFFFFF',
   text: '#2D3748',
   border: '#E2E8F0',
