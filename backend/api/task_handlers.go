@@ -1,16 +1,30 @@
 package api
 
 import (
+	"cognitodo/backend/models"
 	"net/http"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
-	"github.com/itsmarsss/cognitodo/backend/models"
 )
 
-// GetTasks returns all tasks
+// CreateTask handles POST /tasks
+func CreateTask(c *gin.Context) {
+	var task models.Task
+	if err := c.ShouldBindJSON(&task); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	if err := models.CreateTask(&task); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusCreated, task)
+}
+
+// GetTasks handles GET /tasks
 func GetTasks(c *gin.Context) {
-	tasks, err := models.GetAllTasks()
+	tasks, err := models.GetTasks()
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -18,83 +32,51 @@ func GetTasks(c *gin.Context) {
 	c.JSON(http.StatusOK, tasks)
 }
 
-// GetTask returns a specific task by ID
+// GetTask handles GET /tasks/:id
 func GetTask(c *gin.Context) {
-	id, err := strconv.ParseUint(c.Param("id"), 10, 32)
+	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid task ID"})
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid ID"})
 		return
 	}
-
-	task, err := models.GetTaskByID(uint(id))
+	task, err := models.GetTask(id)
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Task not found"})
 		return
 	}
-
 	c.JSON(http.StatusOK, task)
 }
 
-// CreateTask creates a new task
-func CreateTask(c *gin.Context) {
+// UpdateTask handles PUT /tasks/:id
+func UpdateTask(c *gin.Context) {
+	id, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid ID"})
+		return
+	}
 	var task models.Task
 	if err := c.ShouldBindJSON(&task); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-
-	if err := models.CreateTask(&task); err != nil {
+	task.ID = id
+	if err := models.UpdateTask(task); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
-
-	c.JSON(http.StatusCreated, task)
+	c.JSON(http.StatusOK, task)
 }
 
-// UpdateTask updates an existing task
-func UpdateTask(c *gin.Context) {
-	id, err := strconv.ParseUint(c.Param("id"), 10, 32)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid task ID"})
-		return
-	}
-
-	task, err := models.GetTaskByID(uint(id))
-	if err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "Task not found"})
-		return
-	}
-
-	var updatedTask models.Task
-	if err := c.ShouldBindJSON(&updatedTask); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
-	}
-
-	// Update fields while preserving the ID
-	updatedTask.ID = task.ID
-	updatedTask.CreatedAt = task.CreatedAt
-
-	if err := models.UpdateTask(&updatedTask); err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-		return
-	}
-
-	c.JSON(http.StatusOK, updatedTask)
-}
-
-// DeleteTask deletes a task
+// DeleteTask handles DELETE /tasks/:id
 func DeleteTask(c *gin.Context) {
-	id, err := strconv.ParseUint(c.Param("id"), 10, 32)
+	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid task ID"})
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid ID"})
 		return
 	}
-
-	if err := models.DeleteTask(uint(id)); err != nil {
+	if err := models.DeleteTask(id); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
-
-	c.JSON(http.StatusOK, gin.H{"message": "Task deleted successfully"})
-} 
+	c.Status(http.StatusNoContent)
+}

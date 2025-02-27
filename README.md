@@ -321,53 +321,59 @@ package services
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
-	"cognitodo/backend/models"
-	"github.com/sashabaranov/go-openai"
-	"github.com/spf13/viper"
+
+	"cognitodo/backend/models" // Adjust this import path to your project structure
+
+	"github.com/cohesion-org/deepseek-go"
 )
 
-// GenerateDailyPlan uses OpenAI to create a daily schedule from a list of tasks
+// GenerateDailyPlan uses DeepSeek to create a daily schedule from a list of tasks
 func GenerateDailyPlan(tasks []models.Task) (models.DailyPlan, error) {
-	client := openai.NewClient(viper.GetString("OPENAI_API_KEY"))
-	prompt := "You are a helpful assistant that plans daily schedules. Given the following tasks, organize them into a schedule for the day, assigning start and end times and priorities.\n\nTasks:\n"
-	for _, task := range tasks {
-		prompt += fmt.Sprintf("- ID: %d, Description: %s\n", task.ID, task.Description)
-	}
-	prompt += "\nPlease respond with a JSON object in the following format:\n{\n  \"schedule\": [\n    {\n      \"task_id\": 1,\n      \"start_time\": \"09:00\",\n      \"end_time\": \"10:00\",\n      \"priority\": \"high\"\n    },\n    ...\n  ]\n}"
+    // Initialize the DeepSeek client with the API key from environment variables
+    client := deepseek.NewClient("sk-9b338f1e1d3e423ab765fc8a300fd13a")
 
-	resp, err := client.CreateChatCompletion(
-		context.Background(),
-		openai.ChatCompletionRequest{
-			Model: openai.GPT3Dot5Turbo, // Using GPT-3.5 Turbo for cost-efficiency
-			Messages: []openai.ChatCompletionMessage{
-				{
-					Role:    openai.ChatMessageRoleUser,
-					Content: prompt,
-				},
-			},
-			ResponseFormat: &openai.ChatCompletionResponseFormat{
-				Type: "json_object",
-			},
-		},
-	)
-	if err != nil {
-		return models.DailyPlan{}, err
-	}
+    // Construct the prompt with the list of tasks
+    prompt := "You are a helpful assistant that plans daily schedules. Given the following tasks, organize them into a schedule for the day, assigning start and end times and priorities.\n\nTasks:\n"
+    for _, task := range tasks {
+        prompt += fmt.Sprintf("- ID: %d, Description: %s\n", task.ID, task.Description)
+    }
+    prompt += "\nPlease respond with a JSON object in the following format:\n{\n  \"schedule\": [\n    {\n      \"task_id\": 1,\n      \"start_time\": \"09:00\",\n      \"end_time\": \"10:00\",\n      \"priority\": \"high\"\n    },\n    ...\n  ]\n}"
 
-	var plan struct {
-		Schedule []models.ScheduledTask `json:"schedule"`
-	}
-	if err := json.Unmarshal([]byte(resp.Choices[0].Message.Content), &plan); err != nil {
-		return models.DailyPlan{}, err
-	}
+    // Create the chat completion request
+    resp, err := client.CreateChatCompletion(
+        context.Background(),
+        &deepseek.ChatCompletionRequest{
+            Model: "deepseek-chat", // Replace with actual model name
+            Messages: []deepseek.ChatCompletionMessage{
+                {
+                    Role:    "user",
+                    Content: prompt,
+                },
+            },
+            // ResponseFormat: &deepseek.ChatCompletionResponseFormat{
+            //     Type: "json_object",
+            // },
+        },
+    )
+    if err != nil {
+        return models.DailyPlan{}, fmt.Errorf("failed to create chat completion: %v", err)
+    }
 
-	// For simplicity, assume the plan is for today
-	return models.DailyPlan{
-		Date:     "today",
-		Schedule: plan.Schedule,
-	}, nil
+    // Extract JSON using JSONExtractor
+    extractor := deepseek.NewJSONExtractor(nil)
+    var plan struct {
+        Schedule []models.ScheduledTask `json:"schedule"`
+    }
+    if err := extractor.ExtractJSON(resp, &plan); err != nil {
+        return models.DailyPlan{}, fmt.Errorf("failed to extract JSON: %v", err)
+    }
+
+    // Return the daily plan
+    return models.DailyPlan{
+        Date:     "today", // Adjust as needed (e.g., use a parameter or current date)
+        Schedule: plan.Schedule,
+    }, nil
 }
 ```
 
