@@ -1,17 +1,19 @@
-import React, {useContext} from 'react';
+import React, {useContext, useState} from 'react';
 import {View, StyleSheet, Text} from 'react-native';
-import {useNavigation} from '@react-navigation/native';
 import TaskList from '../components/TaskList';
 import {TasksContext} from '../contexts/TasksContext';
 import AddTask from '../components/AddTask';
 import DatePicker from '../components/DatePicker';
+import ScheduleButton from '../components/ScheduleButton';
 
 const TaskListScreen: React.FC = () => {
   const {tasks, refreshTasks} = useContext(TasksContext);
-  const navigation = useNavigation();
+  const [refreshing, setRefreshing] = useState(false);
 
-  const handleEditTask = (task: any) => {
-    navigation.navigate('EditTask', {task});
+  const onRefresh = async () => {
+    setRefreshing(true);
+    await refreshTasks();
+    setRefreshing(false);
   };
 
   return (
@@ -20,11 +22,8 @@ const TaskListScreen: React.FC = () => {
         <Text style={styles.header}>My Tasks</Text>
         <DatePicker />
       </View>
-      <TaskList
-        tasks={tasks}
-        onTaskUpdate={refreshTasks}
-        onEditTask={handleEditTask}
-      />
+      <TaskList tasks={tasks} onRefresh={onRefresh} refreshing={refreshing} />
+      <ScheduleButton />
       <AddTask />
     </View>
   );

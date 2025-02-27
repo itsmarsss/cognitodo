@@ -11,15 +11,7 @@ const Task: React.FC<TaskProps> = ({task}) => {
   const navigation = useNavigation();
 
   const handlePress = () => {
-    console.log('Navigating to EditTask with:', task);
-    navigation.navigate('EditTask', {
-      taskId: task.id,
-      initialName: task.name,
-      initialDescription: task.description,
-      initialStatus: task.status,
-      initialPriority: task.priority || 'medium',
-      initialDuration: task.duration,
-    });
+    navigation.navigate('EditTask', {task});
   };
 
   // Function to determine background color based on priority

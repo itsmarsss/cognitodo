@@ -8,27 +8,21 @@ import {
   ScrollView,
   Platform,
   KeyboardAvoidingView,
+  Alert,
 } from 'react-native';
 import {useNavigation} from '@react-navigation/native';
-import {updateTask} from '../services/api';
+import {updateTask, deleteTask} from '../services/api';
 import {TasksContext} from '../contexts/TasksContext';
 
 const EditTaskScreen: React.FC<{route: any}> = ({route}) => {
-  const {
-    taskId,
-    initialName,
-    initialDescription,
-    initialStatus,
-    initialPriority,
-    initialDuration,
-  } = route.params;
+  const {task} = route.params;
 
   // Preload values for editing
-  const [name, setName] = useState(initialName);
-  const [description, setDescription] = useState(initialDescription);
-  const [status, setStatus] = useState(initialStatus);
-  const [priority, setPriority] = useState(initialPriority);
-  const [duration, setDuration] = useState(initialDuration);
+  const [name, setName] = useState(task.name);
+  const [description, setDescription] = useState(task.description);
+  const [status, setStatus] = useState(task.status);
+  const [priority, setPriority] = useState(task.priority);
+  const [duration, setDuration] = useState(task.duration);
   const navigation = useNavigation();
   const {refreshTasks} = useContext(TasksContext);
 
@@ -69,10 +63,20 @@ const EditTaskScreen: React.FC<{route: any}> = ({route}) => {
         refreshTasks();
         navigation.goBack();
       } catch (error) {
-        alert('Failed to update task');
+        Alert.alert('Failed to update task');
       }
     } else {
-      alert('Please enter a task description');
+      Alert.alert('Please enter a task description');
+    }
+  };
+
+  const handleDeleteTask = async (taskId: number) => {
+    try {
+      await deleteTask(taskId);
+      refreshTasks();
+      navigation.goBack();
+    } catch (error) {
+      Alert.alert('Failed to delete task');
     }
   };
 
@@ -171,8 +175,14 @@ const EditTaskScreen: React.FC<{route: any}> = ({route}) => {
 
         <TouchableOpacity
           style={styles.submitButton}
-          onPress={() => handleUpdateTask(taskId)}>
+          onPress={() => handleUpdateTask(task.id)}>
           <Text style={styles.submitButtonText}>Update Task</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={[styles.submitButton, {backgroundColor: '#E53E3E'}]}
+          onPress={() => handleDeleteTask(task.id)}>
+          <Text style={styles.submitButtonText}>Delete Task</Text>
         </TouchableOpacity>
       </ScrollView>
     </KeyboardAvoidingView>
@@ -235,7 +245,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     padding: 16,
     alignItems: 'center',
-    marginVertical: 20,
+    marginTop: 15,
   },
   submitButtonText: {
     color: '#fff',

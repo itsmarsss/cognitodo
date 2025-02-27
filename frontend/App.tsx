@@ -2,7 +2,6 @@
 import React from 'react';
 import {NavigationContainer} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
-import Icon from 'react-native-vector-icons/MaterialIcons';
 import {TasksProvider} from './src/contexts/TasksContext';
 import TaskListScreen from './src/screens/TaskListScreen';
 import AddTaskScreen from './src/screens/AddTaskScreen';
@@ -48,7 +47,7 @@ const App: React.FC = () => {
             options={{title: 'Edit Task'}}
           />
           <Stack.Screen
-            name="Schedule"
+            name="ScheduleList"
             component={SchedulesScreen}
             options={{title: 'Daily Schedule'}}
           />

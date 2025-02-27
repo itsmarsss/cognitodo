@@ -16,8 +16,8 @@ const api = axios.create({
 export const createTask = async (
   name: string,
   description: string,
-  status: 'pending' | 'completed' | 'cancelled' | 'rescheduled' = 'pending',
-  priority: 'high' | 'medium' | 'low',
+  status: string,
+  priority: string,
   duration: string,
 ) => {
   const response = await api.post('/tasks', {
@@ -41,8 +41,8 @@ export const updateTask = async (
   id: number,
   name: string,
   description: string,
-  status: 'pending' | 'completed' | 'cancelled' | 'rescheduled',
-  priority: 'high' | 'medium' | 'low',
+  status: string,
+  priority: string,
   duration: string,
 ) => {
   const response = await api.put(`/tasks/${id}`, {
@@ -61,7 +61,7 @@ export const deleteTask = async (id: number) => {
 };
 
 // Updated to accept a date parameter
-export const getDailyPlan = async (date: string) => {
-  const response = await api.get(`/plan?date=${date}`);
+export const getDailyPlan = async () => {
+  const response = await api.get(`/plan`);
   return response.data;
 };

@@ -9,6 +9,7 @@ import {
   ScrollView,
   Platform,
   KeyboardAvoidingView,
+  Alert,
 } from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import {createTask} from '../services/api';
@@ -60,10 +61,10 @@ const AddTaskScreen: React.FC = () => {
         refreshTasks();
         navigation.goBack();
       } catch (error) {
-        alert('Failed to add task');
+        Alert.alert('Failed to add task');
       }
     } else {
-      alert('Please enter a task description');
+      Alert.alert('Please enter a task description');
     }
   };
 
