@@ -24,8 +24,15 @@ func GenerateDailyPlan(tasks []models.Task) (models.DailyPlan, error) {
 
 	// Construct the prompt with the list of tasks
 	prompt := "You are an intelligent scheduling assistant that optimizes daily plans for efficiency and balance. Given the following tasks, organize them into a structured daily schedule, assigning appropriate start and end times. Prioritize productivity while allowing for necessary breaks and flexibility. Consider factors such as task urgency, duration, and logical sequencing.\n\nTasks:\n"
+	
 	for _, task := range tasks {
-		prompt += fmt.Sprintf("- ID: %d, Name: %s, Description: %s, Status: %s, Priority: %s, Duration: %s\n", task.ID, task.Name, task.Description, task.Status, task.Priority, task.Duration)
+		newDuration := task.Duration
+
+		if newDuration == "0" {
+			newDuration = "Not specified"
+		}
+
+		prompt += fmt.Sprintf("- ID: %d, Name: %s, Description: %s, Status: %s, Priority: %s, Duration: %s\n", task.ID, task.Name, task.Description, task.Status, task.Priority, newDuration)
 	}
 	prompt += "\nPlease respond with a JSON object in the following format:\n{\n  \"schedule\": [\n    {\n      \"task_id\": 1,\n      \"start_time\": \"09:00\",\n      \"end_time\": \"10:00\",\n      },\n    ...\n  ]\n}"
 

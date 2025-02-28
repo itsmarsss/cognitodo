@@ -20,8 +20,8 @@ const Schedule: React.FC<ScheduleProps> = ({schedule}) => {
     navigation.navigate('EditTask', {task});
   };
 
-  // Function to determine border color based on priority
-  const getBorderColor = (priority: string) => {
+  // Function to determine background color based on priority
+  const getBackgroundColor = (priority: string) => {
     switch (priority) {
       case 'high':
         return '#ff0000'; // Light red
@@ -34,19 +34,19 @@ const Schedule: React.FC<ScheduleProps> = ({schedule}) => {
     }
   };
 
-  // Function to get emoji based on task status
-  const getStatusEmoji = (status: string) => {
+  // Function to determine color based on status
+  const getBorderColor = (status: string) => {
     switch (status) {
       case 'completed':
-        return '✅'; // Check mark
+        return '#28a745'; // Green
       case 'pending':
-        return '⏳'; // Hourglass
+        return '#ffc107'; // Yellow
       case 'cancelled':
-        return '❌'; // Cross mark
+        return '#dc3545'; // Red
       case 'rescheduled':
-        return '🔄'; // Counterclockwise arrows
+        return '#17a2b8'; // Teal
       default:
-        return '❓'; // Question mark for unknown status
+        return '#6c757d'; // Gray for unknown status
     }
   };
 
@@ -59,7 +59,7 @@ const Schedule: React.FC<ScheduleProps> = ({schedule}) => {
             {
               backgroundColor: '#FFFFFF',
               borderLeftWidth: 2,
-              borderLeftColor: getBorderColor(task ? task.priority : 'medium'),
+              borderLeftColor: getBorderColor(task ? task.status : 'pending'),
             },
           ]}
           onPress={handlePress}>
@@ -71,9 +71,10 @@ const Schedule: React.FC<ScheduleProps> = ({schedule}) => {
                 ellipsizeMode="tail">
                 <Text
                   style={{
-                    fontSize: 15,
+                    fontSize: 20,
+                    color: getBackgroundColor(task ? task.priority : 'medium'),
                   }}>
-                  {task ? getStatusEmoji(task.status) : '❓'}
+                  •
                 </Text>{' '}
                 {task ? task.name : 'Task Not Found'}
               </Text>

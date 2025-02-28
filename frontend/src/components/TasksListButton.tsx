@@ -6,7 +6,11 @@ const TasksListButton: React.FC = () => {
   const navigation = useNavigation();
 
   const handlePress = () => {
-    navigation.navigate('TaskList');
+    if (navigation.canGoBack()) {
+      navigation.goBack();
+    } else {
+      navigation.navigate('TaskList');
+    }
   };
 
   return (
